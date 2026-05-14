@@ -1,0 +1,352 @@
+
+<style>
+  .phase-nav { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .phase-btn { padding: 6px 14px; border-radius: 20px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); font-size: 13px; cursor: pointer; transition: all .15s; }
+  .phase-btn.active { background: var(--color-background-tertiary); color: var(--color-text-primary); border-color: var(--color-border-primary); font-weight: 500; }
+  .phase-btn:hover:not(.active) { border-color: var(--color-border-primary); color: var(--color-text-primary); }
+  .phase-panel { display: none; }
+  .phase-panel.active { display: block; }
+  .week-row { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
+  .week-tag { min-width: 56px; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; text-align: center; margin-top: 3px; flex-shrink: 0; }
+  .topic-card { flex: 1; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 14px; }
+  .topic-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+  .topic-items { font-size: 12px; color: var(--color-text-secondary); line-height: 1.7; }
+  .resource-chip { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); color: var(--color-text-secondary); margin: 3px 3px 0 0; }
+  .phase-header { margin-bottom: 16px; }
+  .phase-title { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+  .phase-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+  .milestone-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 4px 10px; border-radius: 12px; background: var(--color-background-success); color: var(--color-text-success); border: 0.5px solid var(--color-border-success); margin-top: 12px; }
+  .section-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .05em; color: var(--color-text-tertiary); margin: 14px 0 8px; }
+  .go-btn { margin-top: 10px; padding: 5px 14px; font-size: 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); cursor: pointer; }
+  .go-btn:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
+  .progress-bar-wrap { height: 4px; background: var(--color-border-tertiary); border-radius: 2px; margin-bottom: 20px; }
+  .progress-bar { height: 4px; border-radius: 2px; }
+
+  .w-purple { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
+  .w-teal   { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
+  .w-coral  { background: #FAECE7; color: #712B13; border-color: #F0997B; }
+  .w-blue   { background: #E6F1FB; color: #0C447C; border-color: #85B7EB; }
+  .w-amber  { background: #FAEEDA; color: #633806; border-color: #EF9F27; }
+
+  @media (prefers-color-scheme: dark) {
+    .w-purple { background: #26215C; color: #CECBF6; border-color: #534AB7; }
+    .w-teal   { background: #04342C; color: #9FE1CB; border-color: #0F6E56; }
+    .w-coral  { background: #4A1B0C; color: #F5C4B3; border-color: #993C1D; }
+    .w-blue   { background: #042C53; color: #B5D4F4; border-color: #185FA5; }
+    .w-amber  { background: #412402; color: #FAC775; border-color: #854F0B; }
+  }
+
+  .bar-purple { background: #7F77DD; }
+  .bar-teal   { background: #1D9E75; }
+  .bar-coral  { background: #D85A30; }
+  .bar-blue   { background: #378ADD; }
+  .bar-amber  { background: #BA7517; }
+</style>
+
+<h2 class="sr-only">AI Agent study plan — 12-week curriculum for advanced engineers</h2>
+
+<div style="padding: 1rem 0 0;">
+  <div style="font-size: 13px; color: var(--color-text-tertiary); margin-bottom: 4px;">12-week curriculum · Advanced track · Build-from-scratch focus</div>
+
+  <div class="phase-nav" id="phaseNav">
+    <button class="phase-btn active" onclick="show(0)" data-i="0">Phase 1 · Foundations</button>
+    <button class="phase-btn" onclick="show(1)" data-i="1">Phase 2 · Core Agent</button>
+    <button class="phase-btn" onclick="show(2)" data-i="2">Phase 3 · Multi-Agent</button>
+    <button class="phase-btn" onclick="show(3)" data-i="3">Phase 4 · Production</button>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar bar-purple" id="pbar" style="width:25%"></div></div>
+
+  <!-- Phase 1 -->
+  <div class="phase-panel active" id="p0">
+    <div class="phase-header">
+      <div class="phase-title">Phase 1 — Agent foundations &amp; mental models</div>
+      <div class="phase-desc">Get precise about what makes something an agent: perception → reasoning → action loops. Bridge from your ML intuition to agentic architectures.</div>
+    </div>
+    <div class="section-label">Week 1 · What is an AI agent?</div>
+    <div class="week-row">
+      <span class="week-tag w-purple">Concepts</span>
+      <div class="topic-card">
+        <div class="topic-title">Agent taxonomy &amp; the ReAct loop</div>
+        <div class="topic-items">Reflex vs. goal-based vs. utility-based agents · LLM-as-agent vs. LLM-in-the-loop · The Perceive → Think → Act cycle · Why RAG ≠ agent</div>
+        <div style="margin-top:8px">
+          <span class="resource-chip">📄 Wooldridge &amp; Jennings (1995)</span>
+          <span class="resource-chip">📄 ReAct paper (Yao 2023)</span>
+          <span class="resource-chip">📺 Andrej Karpathy — Software 2.0</span>
+        </div>
+      </div>
+    </div>
+    <div class="week-row">
+      <span class="week-tag w-purple">Lab</span>
+      <div class="topic-card">
+        <div class="topic-title">Trace an existing agent end-to-end</div>
+        <div class="topic-items">Run AutoGPT or LangChain agent · Log every prompt/response · Identify where reasoning happens vs. where tools fire · Annotate the trace manually</div>
+      </div>
+    </div>
+
+    <div class="section-label">Week 2 · LLMs as reasoning engines</div>
+    <div class="week-row">
+      <span class="week-tag w-purple">Concepts</span>
+      <div class="topic-card">
+        <div class="topic-title">Prompting for reliable reasoning</div>
+        <div class="topic-items">Chain-of-thought vs. zero-shot-CoT · Self-consistency decoding · Structured output (JSON mode, tool-use API) · Token budget and context window management</div>
+        <div style="margin-top:8px">
+          <span class="resource-chip">📄 Chain-of-Thought Prompting (Wei 2022)</span>
+          <span class="resource-chip">📄 Anthropic prompt engineering docs</span>
+        </div>
+      </div>
+    </div>
+    <div class="week-row">
+      <span class="week-tag w-purple">Lab</span>
+      <div class="topic-card">
+        <div class="topic-title">Build a raw reasoning harness</div>
+        <div class="topic-items">Call Claude / GPT-4o via API with no framework · Implement CoT yourself · Benchmark structured output reliability · Measure accuracy vs. prompt design</div>
+      </div>
+    </div>
+
+    <div class="section-label">Week 3 · Memory &amp; state</div>
+    <div class="week-row">
+      <span class="week-tag w-purple">Concepts</span>
+      <div class="topic-card">
+        <div class="topic-title">Memory taxonomy: in-context, external, episodic</div>
+        <div class="topic-items">Sliding window context · Vector DB retrieval (FAISS, Chroma, Pinecone) · Semantic vs. episodic memory · Entity extraction &amp; knowledge graphs</div>
+        <div style="margin-top:8px">
+          <span class="resource-chip">📄 MemGPT paper</span>
+          <span class="resource-chip">🛠 LlamaIndex docs</span>
+        </div>
+      </div>
+    </div>
+    <div class="week-row">
+      <span class="week-tag w-purple">Lab</span>
+      <div class="topic-card">
+        <div class="topic-title">Persistent memory store from scratch</div>
+        <div class="topic-items">Store conversation summaries in a vector DB · Build retrieval-augmented recall · Evaluate retrieval precision with a test suite</div>
+      </div>
+    </div>
+
+    <div class="milestone-badge"><i class="ti ti-trophy" aria-hidden="true"></i> Milestone: Simple ReAct agent with memory — no framework</div>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="phase-panel" id="p1">
+    <div class="phase-header">
+      <div class="phase-title">Phase 2 — Core agent architecture</div>
+      <div class="phase-desc">Design and build a production-quality single agent: planning, tool use, error handling, and evaluation. This is the heart of the curriculum.</div>
+    </div>
+    <div class="section-label">Week 4 · Tool use &amp; function calling</div>
+    <div class="week-row">
+      <span class="week-tag w-teal">Concepts</span>
+      <div class="topic-card">
+        <div class="topic-title">Tool design principles</div>
+        <div class="topic-items">Tool schema design (names matter!) · Parallel vs. sequential tool calls · Tool error propagation · Security: sandboxing code execution, rate limits</div>
+        <div style="margin-top:8px">
+          <span class="resource-chip">📄 Toolformer paper</span>
+          <span class="resource-chip">📄 Claude tool-use API docs</span>
+        </div>
+      </div>
+    </div>
+    <div class="week-row">
+      <span class="week-tag w-teal">Lab</span>
+      <div class="topic-card">
+        <div class="topic-title">Build a general-purpose tool registry</div>
+        <div class="topic-items">Python decorator-based tool registration · Auto-generate JSON schemas from type hints · Implement a retry-with-reflection loop on tool failure</div>
+      </div>
+    </div>
+
+    <div class="section-label">Week 5 · Planning &amp; task decomposition</div>
+    <div class="week-row">
+      <span class="week-tag w-teal">Concepts</span>
+      <div class="topic-card">
+        <div class="topic-title">Planning paradigms: MRKL, PAL, tree of thought</div>
+        <div class="topic-items">Task graph decomposition · Plan-and-execute vs. online planning · Backtracking and replanning · When to replan vs. continue · LLM-as-planner failure modes</div>
+        <div style="margin-top:8px">
+          <span class="resource-chip">📄 Tree of Thoughts (Yao 2023)</span>
+          <span class="resource-chip">📄 Plan-and-Solve (Wang 2023)</span>
+        </div>
+      </div>
+    </div>
+    <div class="week-row">
+      <span class="week-tag w-teal">Lab</span>
+      <div class="topic-card">
+        <div class="topic-title">Implement a task graph executor</div>
+        <div class="topic-items">Parse LLM-generated DAG into a dependency graph · Execute nodes in topological order · Handle partial failures gracefully · Add human-in-the-loop checkpoint</div>
+      </div>
+    </div>
+
+    <div class="section-label">Week 6 · Evaluation &amp; reliability</div>
+    <div class="week-row">
+      <span class="week-tag w-teal">Concepts</span>
+      <div class="topic-card">
+        <div class="topic-title">Agentic evals: harder than model evals</div>
+        <div class="topic-items">Trajectory evaluation vs. outcome evaluation · LLM-as-judge frameworks · Unit testing tools and planners · Fuzzing prompts · Regression suites for agent behavior</div>
+        <div style="margin-top:8px">
+          <span class="resource-chip">📄 AgentBench paper</span>
+          <span class="resource-chip">🛠 Weave / LangSmith / Braintrust</span>
+        </div>
+      </div>
+    </div>
+    <div class="week-row">
+      <span class="week-tag w-teal">Lab</span>
+      <div class="topic-card">
+        <div class="topic-title">Build an eval harness for your agent</div>
+        <div class="topic-items">Define 50 test cases spanning success / failure / edge cases · Auto-grade with LLM judge + manual spot-check · Track metric drift across iterations</div>
+      </div>
+    </div>
+
+    <div class="milestone-badge"><i class="ti ti-trophy" aria-hidden="true"></i> Milestone: Evaluated, tested, single-agent system capable of multi-step tasks</div>
+  </div>
+
+  <!-- Phase 3 -->
+  <div class="phase-panel" id="p2">
+    <div class="phase-header">
+      <div class="phase-title">Phase 3 — Multi-agent systems</div>
+      <div class="phase-desc">Go beyond a single agent: orchestration, inter-agent communication, role specialization, and emergent coordination patterns.</div>
+    </div>
+    <div class="section-label">Week 7 · Multi-agent architecture patterns</div>
+    <div class="week-row">
+      <span class="week-tag w-coral">Concepts</span>
+      <div class="topic-card">
+        <div class="topic-title">Orchestrator / subagent / peer topologies</div>
+        <div class="topic-items">Hub-and-spoke vs. peer mesh · Role specialization (planner, executor, critic, memory) · Shared vs. private context · Trust boundaries between agents · Debate / self-critique loops</div>
+        <div style="margin-top:8px">
+          <span class="resource-chip">📄 Anthropic multi-agent blog</span>
+          <span class="resource-chip">📄 Society of Mind (Minsky)</span>
+        </div>
+      </div>
+    </div>
+    <div class="week-row">
+      <span class="week-tag w-coral">Lab</span>
+      <div class="topic-card">
+        <div class="topic-title">Orchestrator + 3 specialist agents</div>
+        <div class="topic-items">Planner decomposes goals · Researcher fetches/summarizes data · Coder writes and runs code · Critic reviews outputs · All agents share a message bus</div>
+      </div>
+    </div>
+
+    <div class="section-label">Week 8 · Communication &amp; shared state</div>
+    <div class="week-row">
+      <span class="week-tag w-coral">Concepts</span>
+      <div class="topic-card">
+        <div class="topic-title">Inter-agent protocols &amp; blackboard architectures</div>
+        <div class="topic-items">Message passing vs. shared memory · Structured handoff formats (JSON task specs) · Conflict resolution when agents disagree · Async execution &amp; event queues</div>
+        <div style="margin-top:8px">
+          <span class="resource-chip">📄 AutoGen paper (Microsoft 2023)</span>
+          <span class="resource-chip">🛠 LangGraph</span>
+        </div>
+      </div>
+    </div>
+    <div class="week-row">
+      <span class="week-tag w-coral">Lab</span>
+      <div class="topic-card">
+        <div class="topic-title">Build a shared blackboard with async agents</div>
+        <div class="topic-items">Redis-backed shared state · Agents subscribe to task events · Implement locking for concurrent writes · Add a supervisor agent for deadlock detection</div>
+      </div>
+    </div>
+
+    <div class="section-label">Week 9 · Safety, alignment &amp; control</div>
+    <div class="week-row">
+      <span class="week-tag w-coral">Concepts</span>
+      <div class="topic-card">
+        <div class="topic-title">Minimal-footprint design &amp; human oversight</div>
+        <div class="topic-items">Prompt injection attacks · Scope creep / goal misgeneralization · Confirmation checkpoints for irreversible actions · Constitutional constraints in system prompts · Monitoring &amp; kill switches</div>
+        <div style="margin-top:8px">
+          <span class="resource-chip">📄 Anthropic responsible scaling policy</span>
+          <span class="resource-chip">📄 OWASP LLM Top 10</span>
+        </div>
+      </div>
+    </div>
+    <div class="week-row">
+      <span class="week-tag w-coral">Lab</span>
+      <div class="topic-card">
+        <div class="topic-title">Red-team your own agent</div>
+        <div class="topic-items">Inject adversarial tool outputs · Attempt prompt injection via user data · Document attack vectors · Add a guard-rail layer and retest</div>
+      </div>
+    </div>
+
+    <div class="milestone-badge"><i class="ti ti-trophy" aria-hidden="true"></i> Milestone: Secure, multi-agent system with observable communication and human oversight</div>
+  </div>
+
+  <!-- Phase 4 -->
+  <div class="phase-panel" id="p3">
+    <div class="phase-header">
+      <div class="phase-title">Phase 4 — Production &amp; beyond</div>
+      <div class="phase-desc">Ship it. Observability, latency optimization, cost management, and staying current with fast-moving research.</div>
+    </div>
+    <div class="section-label">Week 10 · Observability &amp; debugging</div>
+    <div class="week-row">
+      <span class="week-tag w-blue">Concepts</span>
+      <div class="topic-card">
+        <div class="topic-title">Distributed tracing for agent systems</div>
+        <div class="topic-items">Span-based traces across agent hops · LLM token logging &amp; cost dashboards · Replay debugging (deterministic seeding) · Alerting on reasoning drift</div>
+        <div style="margin-top:8px">
+          <span class="resource-chip">🛠 LangSmith / Braintrust</span>
+          <span class="resource-chip">🛠 OpenTelemetry + Jaeger</span>
+          <span class="resource-chip">🛠 Helicone</span>
+        </div>
+      </div>
+    </div>
+    <div class="week-row">
+      <span class="week-tag w-blue">Lab</span>
+      <div class="topic-card">
+        <div class="topic-title">Instrument your agent with full tracing</div>
+        <div class="topic-items">Add OTEL spans around every LLM call and tool call · Build a cost-per-task dashboard · Set up anomaly alerts · Replay a failed run and fix it</div>
+      </div>
+    </div>
+
+    <div class="section-label">Week 11 · Latency, cost &amp; model selection</div>
+    <div class="week-row">
+      <span class="week-tag w-blue">Concepts</span>
+      <div class="topic-card">
+        <div class="topic-title">Optimizing the agent execution budget</div>
+        <div class="topic-items">Cascade models: small model for routing, large for reasoning · Caching LLM responses (semantic cache) · Prompt compression techniques · Streaming vs. batch execution · Cost/quality Pareto frontier</div>
+        <div style="margin-top:8px">
+          <span class="resource-chip">📄 LLMLingua (prompt compression)</span>
+          <span class="resource-chip">🛠 GPTCache</span>
+        </div>
+      </div>
+    </div>
+    <div class="week-row">
+      <span class="week-tag w-blue">Lab</span>
+      <div class="topic-card">
+        <div class="topic-title">Cut cost by 50% without quality loss</div>
+        <div class="topic-items">Profile token usage per step · Route simple sub-tasks to Haiku/GPT-3.5 · Add semantic caching layer · Measure quality on eval suite before and after</div>
+      </div>
+    </div>
+
+    <div class="section-label">Week 12 · Capstone &amp; staying current</div>
+    <div class="week-row">
+      <span class="week-tag w-amber">Project</span>
+      <div class="topic-card">
+        <div class="topic-title">Capstone: end-to-end agent of your choosing</div>
+        <div class="topic-items">Pick a real domain (coding assistant, research agent, data analyst) · Build from scratch using only your own abstractions · Full eval suite · Observability · Write a postmortem</div>
+      </div>
+    </div>
+    <div class="week-row">
+      <span class="week-tag w-amber">Meta</span>
+      <div class="topic-card">
+        <div class="topic-title">Staying current in a fast-moving field</div>
+        <div class="topic-items">Papers to track: arXiv cs.AI + cs.CL weekly digests · Follow: Lilian Weng's blog, Sebastian Raschka's newsletter · Communities: r/MachineLearning, Hugging Face Discord · Benchmark leaderboards: SWE-bench, GAIA, AgentBench</div>
+      </div>
+    </div>
+
+    <div class="milestone-badge"><i class="ti ti-trophy" aria-hidden="true"></i> Milestone: Production-ready capstone agent — shipped, observed, and documented</div>
+  </div>
+
+  <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+    <button class="go-btn" onclick="sendPrompt('Go deeper on Phase 1 — what are the best resources for understanding agent architecture?')">Dive deeper on Phase 1 ↗</button>
+    <button class="go-btn" onclick="sendPrompt('What are the most common mistakes when building agents from scratch?')">Common pitfalls ↗</button>
+    <button class="go-btn" onclick="sendPrompt('Recommend papers I should read for each phase of my AI agent study plan')">Reading list ↗</button>
+    <button class="go-btn" onclick="sendPrompt('Help me design the capstone project for my AI agent curriculum')">Design capstone ↗</button>
+  </div>
+</div>
+
+<script>
+  const bars = ['bar-purple','bar-teal','bar-coral','bar-blue'];
+  const pcts = ['25%','50%','75%','100%'];
+  function show(i) {
+    document.querySelectorAll('.phase-panel').forEach((p,j) => p.classList.toggle('active', j===i));
+    document.querySelectorAll('.phase-btn').forEach((b,j) => b.classList.toggle('active', j===i));
+    const pb = document.getElementById('pbar');
+    pb.className = 'progress-bar ' + bars[i];
+    pb.style.width = pcts[i];
+  }
+</script>

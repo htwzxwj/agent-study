@@ -1,0 +1,345 @@
+
+<style>
+  .setup-tabs { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+  .stab { padding: 5px 14px; border-radius: 16px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); font-size: 13px; cursor: pointer; transition: all .15s; }
+  .stab.active { background: var(--color-background-tertiary); color: var(--color-text-primary); border-color: var(--color-border-primary); font-weight: 500; }
+  .stab:hover:not(.active) { border-color: var(--color-border-primary); color: var(--color-text-primary); }
+  .spanel { display: none; }
+  .spanel.active { display: block; }
+  .step-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
+  .step-check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--color-border-secondary); cursor: pointer; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .step-check.done { background: var(--color-background-success); border-color: var(--color-border-success); }
+  .step-check.done::after { content: '✓'; font-size: 11px; color: var(--color-text-success); }
+  .step-body { flex: 1; }
+  .step-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; line-height: 1.4; }
+  .step-title.done { text-decoration: line-through; color: var(--color-text-tertiary); }
+  .code-block { font-family: var(--font-mono); font-size: 12px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 8px 12px; margin: 6px 0; line-height: 1.7; color: var(--color-text-secondary); position: relative; white-space: pre; overflow-x: auto; }
+  .copy-btn { position: absolute; top: 6px; right: 8px; font-size: 11px; padding: 2px 8px; border-radius: 8px; border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); color: var(--color-text-tertiary); cursor: pointer; }
+  .copy-btn:hover { color: var(--color-text-primary); }
+  .note { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; margin-top: 4px; }
+  .section-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .05em; color: var(--color-text-tertiary); margin: 16px 0 8px; }
+  .progress-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .progress-track { flex: 1; height: 4px; background: var(--color-border-tertiary); border-radius: 2px; }
+  .progress-fill { height: 4px; border-radius: 2px; background: #1D9E75; transition: width .3s; }
+  .progress-label { font-size: 12px; color: var(--color-text-tertiary); min-width: 48px; text-align: right; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); color: var(--color-text-secondary); margin-left: 6px; vertical-align: middle; }
+  .badge.warn { background: var(--color-background-warning); color: var(--color-text-warning); border-color: var(--color-border-warning); }
+  .badge.info { background: var(--color-background-info); color: var(--color-text-info); border-color: var(--color-border-info); }
+</style>
+
+<h2 class="sr-only">AI Agent study environment setup checklist for WSL</h2>
+
+<div style="padding: 1rem 0 0;">
+  <div style="font-size: 13px; color: var(--color-text-tertiary); margin-bottom: 12px;">Check off each step as you go — progress is saved in your session</div>
+
+  <div class="setup-tabs" id="tabBar">
+    <button class="stab active" onclick="showTab(0)">1 · Core Python</button>
+    <button class="stab" onclick="showTab(1)">2 · Packages</button>
+    <button class="stab" onclick="showTab(2)">3 · Services</button>
+    <button class="stab" onclick="showTab(3)">4 · Claude Code</button>
+    <button class="stab" onclick="showTab(4)">5 · Project layout</button>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="pbar" style="width:0%"></div></div>
+    <div class="progress-label" id="plabel">0 / 0</div>
+  </div>
+
+  <!-- Tab 0: Core Python -->
+  <div class="spanel active" id="tab0">
+    <div class="section-label">Python runtime</div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Install uv <span class="badge info">recommended</span></div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>curl -LsSf https://astral.sh/uv/install.sh | sh
+source ~/.bashrc</div>
+        <div class="note">uv replaces pip + venv + pyenv in one tool — 10–100× faster installs. You'll use it to manage Python versions and project dependencies throughout the study plan.</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Install Python 3.11 via uv</div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>uv python install 3.11
+uv python pin 3.11</div>
+        <div class="note">3.11 hits the sweet spot: all current agent libraries support it, and it's noticeably faster than 3.10.</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Install VS Code WSL extension (on Windows side)</div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button># from your WSL terminal — opens VS Code connected to WSL
+code .</div>
+        <div class="note">Install the "WSL" extension in VS Code on Windows first. After that, <code style="font-family:var(--font-mono);font-size:11px">code .</code> from any WSL directory opens a full Linux-connected VS Code session.</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Set up API keys in <code style="font-family:var(--font-mono);font-size:12px">~/.bashrc</code></div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>echo 'export ANTHROPIC_API_KEY="sk-ant-..."' >> ~/.bashrc
+echo 'export OPENAI_API_KEY="sk-..."' >> ~/.bashrc   # optional
+source ~/.bashrc</div>
+        <div class="note">Global env vars for your shell means every project inherits them without committing secrets. Each project also gets a <code style="font-family:var(--font-mono);font-size:11px">.env</code> file loaded via python-dotenv for fine-grained overrides.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 1: Packages -->
+  <div class="spanel" id="tab1">
+    <div class="section-label">Per-project virtual environment</div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Create your first project with uv</div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>mkdir ~/projects/agent-study && cd ~/projects/agent-study
+uv init
+uv venv && source .venv/bin/activate</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Install LLM clients <span class="badge">Phase 1–4</span></div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>uv add anthropic openai tiktoken</div>
+        <div class="note">You'll use the Anthropic SDK as primary. OpenAI is there for comparison experiments in Phase 2.</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Install vector DB + memory <span class="badge">Phase 1</span></div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>uv add chromadb faiss-cpu sentence-transformers</div>
+        <div class="note">ChromaDB for the Week 3 memory store (easy to run locally). FAISS for when you need speed at scale. sentence-transformers for embeddings without an API call.</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Install data / async / web stack <span class="badge">Phase 2–3</span></div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>uv add pydantic fastapi uvicorn httpx aiohttp redis python-dotenv</div>
+        <div class="note">FastAPI for serving agent endpoints. Redis client for the Phase 3 shared blackboard. httpx/aiohttp for async tool calls inside agents.</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Install dev / eval tools <span class="badge">Phase 2</span></div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>uv add pytest pytest-asyncio rich loguru jupyter ipykernel</div>
+        <div class="note">Pytest for your eval harness. Rich for pretty agent traces in the terminal. Loguru for structured logging. Jupyter for exploratory experimentation.</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Install observability <span class="badge">Phase 4</span></div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>uv add opentelemetry-api opentelemetry-sdk opentelemetry-exporter-jaeger</div>
+        <div class="note">Add this when you hit Week 10. Don't install now — you won't need it for Phases 1–3.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Services -->
+  <div class="spanel" id="tab2">
+    <div class="section-label">Background services via Docker</div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Install Docker Desktop (Windows) + enable WSL integration</div>
+        <div class="note">Download Docker Desktop → Settings → Resources → WSL Integration → enable your Ubuntu distro. After this, <code style="font-family:var(--font-mono);font-size:11px">docker</code> works inside WSL natively.</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Run Redis (Phase 3 shared blackboard)</div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>docker run -d --name redis-agent -p 6379:6379 redis:7-alpine</div>
+        <div class="note">Start this when you reach Phase 3, Week 8. Redis is your shared state store for multi-agent communication.</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Run Jaeger (Phase 4 distributed tracing)</div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>docker run -d --name jaeger \
+  -p 16686:16686 -p 4317:4317 \
+  jaegertracing/all-in-one:latest</div>
+        <div class="note">Jaeger UI at <code style="font-family:var(--font-mono);font-size:11px">localhost:16686</code>. You'll trace every LLM call and tool call through this in Week 10.</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Optional: tune WSL2 memory in <code style="font-family:var(--font-mono);font-size:12px">.wslconfig</code> <span class="badge warn">if RAM &lt; 16GB</span></div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button># C:\Users\YourName\.wslconfig
+[wsl2]
+memory=8GB
+processors=4
+swap=2GB</div>
+        <div class="note">sentence-transformers loads a ~400MB model into memory. If your machine has 8GB RAM, cap WSL at 6GB to avoid OOM kills.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 3: Claude Code -->
+  <div class="spanel" id="tab3">
+    <div class="section-label">Claude Code in WSL</div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Install Node.js 18+ via nvm</div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+source ~/.bashrc
+nvm install 20 && nvm use 20</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Configure npm global dir (avoids sudo)</div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>mkdir -p ~/.npm-global
+npm config set prefix ~/.npm-global
+echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Install Claude Code <span class="badge warn">do NOT use sudo</span></div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>npm install -g @anthropic-ai/claude-code
+claude --version</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Authenticate and run health check</div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>claude          # triggers OAuth login on first run
+claude doctor   # verifies everything is connected</div>
+        <div class="note">Claude Code is your pair programmer during the lab weeks. Use it inside your project directory — it reads your codebase for context. Especially useful for the eval harness in Week 6 and the multi-agent wiring in Phase 3.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 4: Project Layout -->
+  <div class="spanel" id="tab4">
+    <div class="section-label">Recommended project structure</div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Scaffold the study repo</div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>mkdir -p ~/projects/agent-study/{phase1,phase2,phase3,phase4}
+mkdir -p ~/projects/agent-study/shared/{memory,tools,utils}
+touch ~/projects/agent-study/.env
+touch ~/projects/agent-study/shared/__init__.py</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Create a shared config loader</div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button># shared/utils/config.py
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
+DEFAULT_MODEL     = os.getenv("MODEL", "claude-sonnet-4-6")
+MAX_TOKENS        = int(os.getenv("MAX_TOKENS", "4096"))</div>
+        <div class="note">All phases import from <code style="font-family:var(--font-mono);font-size:11px">shared/</code> so you're building on real code, not throwing it away at each phase.</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Add a .gitignore</div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button>cat > ~/projects/agent-study/.gitignore << 'EOF'
+.env
+.venv/
+__pycache__/
+*.pyc
+chroma_db/
+*.egg-info/
+.pytest_cache/
+EOF</div>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-check" onclick="toggle(this)"></div>
+      <div class="step-body">
+        <div class="step-title">Verify everything works end-to-end</div>
+        <div class="code-block"><button class="copy-btn" onclick="cp(this)">copy</button">python - << 'EOF'
+import anthropic
+client = anthropic.Anthropic()
+msg = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=64,
+    messages=[{"role": "user", "content": "say: env ok"}]
+)
+print(msg.content[0].text)
+EOF</div>
+        <div class="note">If you see <code style="font-family:var(--font-mono);font-size:11px">env ok</code> — your Python env, API key, and SDK are all wired up. You're ready for Week 1.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+    <button style="padding:5px 14px;font-size:12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer" onclick="sendPrompt('I got an error installing faiss-cpu in WSL, how do I fix it?')">Troubleshoot faiss ↗</button>
+    <button style="padding:5px 14px;font-size:12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer" onclick="sendPrompt('Walk me through Week 1 of the AI agent study plan — what should I build first?')">Start Week 1 ↗</button>
+    <button style="padding:5px 14px;font-size:12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer" onclick="sendPrompt('Show me a minimal ReAct agent implementation in Python to validate my setup')">Validate with code ↗</button>
+  </div>
+</div>
+
+<script>
+  function showTab(i) {
+    document.querySelectorAll('.spanel').forEach((p,j)=>p.classList.toggle('active',j===i));
+    document.querySelectorAll('.stab').forEach((b,j)=>b.classList.toggle('active',j===i));
+  }
+  function toggle(el) {
+    el.classList.toggle('done');
+    const title = el.nextElementSibling.querySelector('.step-title');
+    if (title) title.classList.toggle('done', el.classList.contains('done'));
+    updateProgress();
+  }
+  function updateProgress() {
+    const all = document.querySelectorAll('.step-check');
+    const done = document.querySelectorAll('.step-check.done');
+    const pct = all.length ? Math.round(done.length/all.length*100) : 0;
+    document.getElementById('pbar').style.width = pct+'%';
+    document.getElementById('plabel').textContent = done.length+' / '+all.length;
+  }
+  function cp(btn) {
+    const code = btn.parentElement.textContent.replace('copy','').trim();
+    navigator.clipboard.writeText(code).then(()=>{
+      btn.textContent = 'copied';
+      setTimeout(()=>btn.textContent='copy', 1500);
+    });
+  }
+  updateProgress();
+</script>

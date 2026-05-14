@@ -1,0 +1,244 @@
+
+<style>
+  .tabs { display:flex; gap:6px; margin-bottom:20px; flex-wrap:wrap; }
+  .tab { padding:5px 14px; border-radius:16px; border:0.5px solid var(--color-border-secondary); background:var(--color-background-secondary); color:var(--color-text-secondary); font-size:13px; cursor:pointer; transition:all .15s; }
+  .tab.on { background:var(--color-background-tertiary); color:var(--color-text-primary); border-color:var(--color-border-primary); font-weight:500; }
+  .tab:hover:not(.on) { border-color:var(--color-border-primary); color:var(--color-text-primary); }
+  .pane { display:none; } .pane.on { display:block; }
+  .metric-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+  .metric { background:var(--color-background-secondary); border-radius:var(--border-radius-md); padding:12px 14px; }
+  .metric-label { font-size:11px; color:var(--color-text-tertiary); text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px; }
+  .metric-val { font-size:20px; font-weight:500; color:var(--color-text-primary); }
+  .metric-sub { font-size:11px; color:var(--color-text-tertiary); margin-top:2px; }
+  .card { background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-lg); padding:14px 16px; margin-bottom:12px; }
+  .card-title { font-size:14px; font-weight:500; color:var(--color-text-primary); margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+  .card-body { font-size:13px; color:var(--color-text-secondary); line-height:1.7; }
+  .week-row { display:flex; gap:12px; align-items:flex-start; margin-bottom:12px; }
+  .week-pill { flex-shrink:0; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:500; margin-top:2px; }
+  .wp-purple { background:#EEEDFE; color:#3C3489; }
+  .wp-teal   { background:#E1F5EE; color:#085041; }
+  .wp-amber  { background:#FAEEDA; color:#633806; }
+  @media (prefers-color-scheme:dark) {
+    .wp-purple { background:#26215C; color:#CECBF6; }
+    .wp-teal   { background:#04342C; color:#9FE1CB; }
+    .wp-amber  { background:#412402; color:#FAC775; }
+  }
+  .week-body { flex:1; }
+  .week-title { font-size:13px; font-weight:500; color:var(--color-text-primary); margin-bottom:3px; }
+  .week-items { font-size:12px; color:var(--color-text-secondary); line-height:1.7; }
+  .deliverable { font-size:12px; color:var(--color-text-success); margin-top:4px; }
+  .cov-row { display:grid; grid-template-columns:180px 1fr; gap:12px; align-items:center; margin-bottom:10px; }
+  .cov-label { font-size:13px; color:var(--color-text-primary); }
+  .cov-chips { display:flex; gap:5px; flex-wrap:wrap; }
+  .chip { font-size:11px; padding:2px 8px; border-radius:10px; border:0.5px solid var(--color-border-tertiary); background:var(--color-background-secondary); color:var(--color-text-secondary); }
+  .chip-hit { background:var(--color-background-info); color:var(--color-text-info); border-color:var(--color-border-info); }
+  .biz-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .biz-card { background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-lg); padding:14px 16px; }
+  .biz-icon { font-size:20px; color:var(--color-text-secondary); margin-bottom:8px; }
+  .biz-title { font-size:13px; font-weight:500; color:var(--color-text-primary); margin-bottom:5px; }
+  .biz-body { font-size:12px; color:var(--color-text-secondary); line-height:1.6; }
+  .divider { border:none; border-top:0.5px solid var(--color-border-tertiary); margin:14px 0; }
+  .go-btn { padding:5px 14px; font-size:12px; border-radius:var(--border-radius-md); border:0.5px solid var(--color-border-secondary); background:transparent; color:var(--color-text-secondary); cursor:pointer; margin-top:12px; }
+  .go-btn:hover { background:var(--color-background-secondary); color:var(--color-text-primary); }
+</style>
+
+<h2 class="sr-only">IssueForge capstone project design brief</h2>
+
+<div style="padding:1rem 0 0">
+  <div style="margin-bottom:6px">
+    <span style="font-size:22px;font-weight:500;color:var(--color-text-primary)">IssueForge</span>
+    <span style="font-size:13px;color:var(--color-text-tertiary);margin-left:10px">capstone project · week 12</span>
+  </div>
+  <div style="font-size:14px;color:var(--color-text-secondary);margin-bottom:20px;line-height:1.6">Autonomous multi-agent system that resolves GitHub issues into ready-to-merge pull requests — built entirely from your own abstractions.</div>
+
+  <div class="metric-grid">
+    <div class="metric">
+      <div class="metric-label">Benchmark</div>
+      <div class="metric-val">SWE-bench</div>
+      <div class="metric-sub">industry-standard leaderboard</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Core agents</div>
+      <div class="metric-val">5</div>
+      <div class="metric-sub">orchestrator + 4 specialists</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Build window</div>
+      <div class="metric-val">3 weeks</div>
+      <div class="metric-sub">weeks 10–12 of curriculum</div>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabBar">
+    <button class="tab on" onclick="show(0)">Overview</button>
+    <button class="tab" onclick="show(1)">3-week build plan</button>
+    <button class="tab" onclick="show(2)">Curriculum coverage</button>
+    <button class="tab" onclick="show(3)">Portfolio & business</button>
+  </div>
+
+  <div class="pane on" id="p0">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-bulb" aria-hidden="true" style="font-size:18px"></i> What it does</div>
+      <div class="card-body">A user points IssueForge at any GitHub repo and a specific issue. The system autonomously reads the codebase, understands the required change, writes a patch, runs the test suite, critiques its own output, and opens a pull request — with no human intervention between issue and PR.<br><br>Each specialist agent is purpose-built: Explorer maps the relevant files using AST analysis and semantic search, Planner produces a dependency-ordered task graph, Coder iterates on patches with a sandbox code executor, and Reviewer runs tests and applies a constitutional self-critique before the PR is submitted.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="ti ti-shield-check" aria-hidden="true" style="font-size:18px"></i> What makes it a showcase piece</div>
+      <div class="card-body">It's benchmarkable — you run it against SWE-bench Lite (300 real GitHub issues from popular repos) and publish your resolve rate. Even a 10–15% resolve rate puts you in credible territory; top open-source systems are at 40–50%. Your README shows the number, which is an immediately legible signal of capability.<br><br>It's built from scratch — no LangChain, no CrewAI. Recruiters and collaborators can read your agent loop, tool registry, and memory store directly. The absence of framework magic is the point.<br><br>It's practically useful — run it as a GitHub Action on your own repos. Every time you merge a bug fix it produced, that's a real testimonial.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="ti ti-tools" aria-hidden="true" style="font-size:18px"></i> Tool surface each agent needs</div>
+      <div class="card-body">Explorer: <code style="font-family:var(--font-mono);font-size:11px">read_file</code>, <code style="font-family:var(--font-mono);font-size:11px">list_dir</code>, <code style="font-family:var(--font-mono);font-size:11px">grep</code>, <code style="font-family:var(--font-mono);font-size:11px">ast_parse</code>, <code style="font-family:var(--font-mono);font-size:11px">vector_search</code><br>Planner: <code style="font-family:var(--font-mono);font-size:11px">read_task_context</code>, <code style="font-family:var(--font-mono);font-size:11px">write_task_graph</code><br>Coder: <code style="font-family:var(--font-mono);font-size:11px">write_file</code>, <code style="font-family:var(--font-mono);font-size:11px">apply_patch</code>, <code style="font-family:var(--font-mono);font-size:11px">run_command</code> (sandboxed)<br>Reviewer: <code style="font-family:var(--font-mono);font-size:11px">run_tests</code>, <code style="font-family:var(--font-mono);font-size:11px">read_diff</code>, <code style="font-family:var(--font-mono);font-size:11px">approve_or_reject</code><br>Orchestrator: all of the above, plus <code style="font-family:var(--font-mono);font-size:11px">open_pr</code> (GitHub API)</div>
+    </div>
+    <button class="go-btn" onclick="sendPrompt('Walk me through how the IssueForge Explorer agent should map a codebase — what AST and vector search strategy should it use?')">Explorer deep dive ↗</button>
+  </div>
+
+  <div class="pane" id="p1">
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:16px;line-height:1.6">Each capstone week maps to Phase 4 of the curriculum, but calls back skills built in Phases 1–3. Build in order — each week's deliverable is the input to the next.</div>
+
+    <div class="week-row">
+      <span class="week-pill wp-purple">Week 10</span>
+      <div class="week-body">
+        <div class="week-title">Core abstractions + Explorer + Planner</div>
+        <div class="week-items">Finalize your <code style="font-family:var(--font-mono);font-size:11px">Agent</code> base class, <code style="font-family:var(--font-mono);font-size:11px">Tool</code> registry, and <code style="font-family:var(--font-mono);font-size:11px">Memory</code> interface from Phase 1–2 work · Build Explorer: AST traversal (tree-sitter), ChromaDB semantic index of repo, grep + file read tools · Build Planner: takes Explorer's context map + issue text, produces a JSON task DAG · Wire Orchestrator shell with single-turn delegation</div>
+        <div class="deliverable"><i class="ti ti-check" aria-hidden="true"></i> Deliverable: given an issue, system can identify the right files and produce a plausible task list</div>
+      </div>
+    </div>
+
+    <div class="week-row">
+      <span class="week-pill wp-teal">Week 11</span>
+      <div class="week-body">
+        <div class="week-title">Coder + Reviewer + Memory integration</div>
+        <div class="week-items">Build Coder: patch generation loop with sandboxed <code style="font-family:var(--font-mono);font-size:11px">run_command</code> (Docker subprocess), test-driven iteration (run → observe failure → revise), max 5 retries with backoff · Build Reviewer: constitutional self-critique prompt, must pass linting + original test suite · Connect Memory store: ChromaDB persists codebase embeddings + past issue resolutions · Add human-in-the-loop checkpoint before PR open · Wire full Orchestrator: issue → explore → plan → code → review → PR</div>
+        <div class="deliverable"><i class="ti ti-check" aria-hidden="true"></i> Deliverable: end-to-end run on a simple bug issue in a test repo</div>
+      </div>
+    </div>
+
+    <div class="week-row">
+      <span class="week-pill wp-amber">Week 12</span>
+      <div class="week-body">
+        <div class="week-title">Eval, observability, polish, postmortem</div>
+        <div class="week-items">Run against SWE-bench Lite subset (start with 30 issues): record resolve rate, token cost per task, latency · Add OTEL tracing: span per agent per tool call, cost dashboard · Optimize: route simple issues to a smaller model (claude-haiku), cache codebase embeddings · Write the README: architecture diagram, benchmark results, quick-start, contributing guide · Write the postmortem: what failed, what surprised you, what you'd build next</div>
+        <div class="deliverable"><i class="ti ti-check" aria-hidden="true"></i> Deliverable: public GitHub repo with benchmark score, full tracing, documented postmortem</div>
+      </div>
+    </div>
+
+    <button class="go-btn" onclick="sendPrompt('How do I set up a sandboxed code execution environment for the IssueForge Coder agent in WSL?')">Sandbox setup ↗</button>
+    <button class="go-btn" onclick="sendPrompt('How do I run IssueForge against SWE-bench Lite and measure the resolve rate?')">SWE-bench setup ↗</button>
+  </div>
+
+  <div class="pane" id="p2">
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:16px">Every component of IssueForge directly exercises skills built during the 12-week curriculum. Highlighted chips show which weeks each component calls back to.</div>
+
+    <div class="cov-row">
+      <div class="cov-label">Explorer agent</div>
+      <div class="cov-chips">
+        <span class="chip chip-hit">Wk 2 · LLM prompting</span>
+        <span class="chip chip-hit">Wk 3 · Vector memory</span>
+        <span class="chip chip-hit">Wk 4 · Tool registry</span>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="cov-row">
+      <div class="cov-label">Planner agent</div>
+      <div class="cov-chips">
+        <span class="chip chip-hit">Wk 5 · Task DAG</span>
+        <span class="chip chip-hit">Wk 5 · Plan-and-execute</span>
+        <span class="chip chip-hit">Wk 2 · CoT prompting</span>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="cov-row">
+      <div class="cov-label">Coder agent</div>
+      <div class="cov-chips">
+        <span class="chip chip-hit">Wk 4 · Tool use</span>
+        <span class="chip chip-hit">Wk 4 · Error reflection</span>
+        <span class="chip chip-hit">Wk 5 · Replanning</span>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="cov-row">
+      <div class="cov-label">Reviewer agent</div>
+      <div class="cov-chips">
+        <span class="chip chip-hit">Wk 9 · Self-critique</span>
+        <span class="chip chip-hit">Wk 6 · Eval harness</span>
+        <span class="chip chip-hit">Wk 9 · Constitutional AI</span>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="cov-row">
+      <div class="cov-label">Orchestrator</div>
+      <div class="cov-chips">
+        <span class="chip chip-hit">Wk 7 · Hub-and-spoke</span>
+        <span class="chip chip-hit">Wk 8 · Message passing</span>
+        <span class="chip chip-hit">Wk 9 · Human-in-loop</span>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="cov-row">
+      <div class="cov-label">Memory store</div>
+      <div class="cov-chips">
+        <span class="chip chip-hit">Wk 3 · Episodic memory</span>
+        <span class="chip chip-hit">Wk 3 · Vector retrieval</span>
+        <span class="chip chip-hit">Wk 8 · Shared state</span>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="cov-row">
+      <div class="cov-label">Observability</div>
+      <div class="cov-chips">
+        <span class="chip chip-hit">Wk 10 · OTEL tracing</span>
+        <span class="chip chip-hit">Wk 11 · Cost dashboard</span>
+        <span class="chip chip-hit">Wk 11 · Model routing</span>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="cov-row">
+      <div class="cov-label">SWE-bench eval</div>
+      <div class="cov-chips">
+        <span class="chip chip-hit">Wk 6 · Eval harness</span>
+        <span class="chip chip-hit">Wk 6 · LLM-as-judge</span>
+        <span class="chip chip-hit">Wk 12 · Postmortem</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="pane" id="p3">
+    <div class="biz-grid">
+      <div class="biz-card">
+        <div class="biz-icon"><i class="ti ti-brand-github" aria-hidden="true"></i></div>
+        <div class="biz-title">GitHub Action packaging</div>
+        <div class="biz-body">Wrap IssueForge as a GitHub Action: developers add it to their repo workflow, label any issue with <code style="font-family:var(--font-mono);font-size:11px">issueforge</code>, and a PR appears within minutes. Zero-friction adoption — the agent runs in their CI environment using their own API key.</div>
+      </div>
+      <div class="biz-card">
+        <div class="biz-icon"><i class="ti ti-chart-bar" aria-hidden="true"></i></div>
+        <div class="biz-title">SWE-bench as credibility</div>
+        <div class="biz-body">The resolve rate is a legible, comparable number. A README badge showing "resolves X% of SWE-bench Lite" puts IssueForge next to commercial systems (Devin, SWE-agent, Agentless). Even 12–15% makes it a credible research artifact worth starring.</div>
+      </div>
+      <div class="biz-card">
+        <div class="biz-icon"><i class="ti ti-rocket" aria-hidden="true"></i></div>
+        <div class="biz-title">Path to SaaS</div>
+        <div class="biz-body">Add a thin FastAPI layer, GitHub OAuth, and a per-repo subscription. The core value prop is clear: developers pay per resolved issue. Pricing is easy to justify — if it fixes a 2-hour bug in 5 minutes, the economics are obvious.</div>
+      </div>
+      <div class="biz-card">
+        <div class="biz-icon"><i class="ti ti-users" aria-hidden="true"></i></div>
+        <div class="biz-title">Open source traction</div>
+        <div class="biz-body">Publish with a detailed architecture writeup, benchmark results, and the postmortem. The ML/agent community rewards "built-from-scratch + benchmarked" projects. Submit to arXiv as a technical report — the bar for 2–3 page system papers is low and the visibility is high.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;padding:14px 16px;background:var(--color-background-secondary);border-radius:var(--border-radius-md)">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px">Differentiation from existing tools</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);line-height:1.7">SWE-agent and Agentless use single-model approaches. IssueForge's value is the multi-agent specialization — Explorer's semantic code map makes Coder's patches more precise than vanilla file-read-and-edit. Your postmortem can directly compare architectures, which is the kind of analysis that gets cited.</div>
+    </div>
+
+    <button class="go-btn" onclick="sendPrompt('How do I package IssueForge as a GitHub Action?')">GitHub Action packaging ↗</button>
+    <button class="go-btn" onclick="sendPrompt('How do I write a technical report about IssueForge for arXiv?')">Write the paper ↗</button>
+  </div>
+</div>
+
+<script>
+  function show(i) {
+    document.querySelectorAll('.pane').forEach((p,j)=>p.classList.toggle('on',j===i));
+    document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('on',j===i));
+  }
+</script>
