@@ -1,0 +1,75 @@
+{
+  "task": "What is the capital of France?",
+  "elapsed_seconds": 0.00164794921875,
+  "total_tokens_in": 70,
+  "total_tokens_out": 30,
+  "steps": [
+    {
+      "type": "system",
+      "content": "Task: What is the capital of France?",
+      "metadata": {},
+      "timestamp": 1778827147.9273825,
+      "duration_ms": null
+    },
+    {
+      "type": "reasoning",
+      "content": "The user is asking about the capital of France. I should search for this information.",
+      "metadata": {
+        "tokens_in": 25,
+        "tokens_out": 18
+      },
+      "timestamp": 1778827147.9273877,
+      "duration_ms": null
+    },
+    {
+      "type": "action",
+      "content": "Call tool: search",
+      "metadata": {
+        "tool_name": "search",
+        "tool_input": "{\"query\": \"capital of France\"}",
+        "duration_ms": 120
+      },
+      "timestamp": 1778827147.9274416,
+      "duration_ms": null
+    },
+    {
+      "type": "observation",
+      "content": "Paris is the capital and most populous city of France.",
+      "metadata": {
+        "source": "search_results"
+      },
+      "timestamp": 1778827147.9274445,
+      "duration_ms": null
+    },
+    {
+      "type": "reasoning",
+      "content": "Based on the search results, the capital of France is Paris. I can now answer.",
+      "metadata": {
+        "tokens_in": 45,
+        "tokens_out": 12
+      },
+      "timestamp": 1778827147.927447,
+      "duration_ms": null
+    },
+    {
+      "type": "action",
+      "content": "Call tool: respond",
+      "metadata": {
+        "tool_name": "respond",
+        "tool_input": "{\"answer\": \"The capital of France is Paris.\"}",
+        "duration_ms": 5
+      },
+      "timestamp": 1778827147.9274614,
+      "duration_ms": null
+    },
+    {
+      "type": "observation",
+      "content": "Response delivered to user.",
+      "metadata": {
+        "source": "system"
+      },
+      "timestamp": 1778827147.927463,
+      "duration_ms": null
+    }
+  ]
+}
